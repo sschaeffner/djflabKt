@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  snapserver:
+    build: .
+    volumes:
+      - ./snapserver.conf:/etc/snapserver.conf
+    ports:
+      - "1780:1780"
+    environment:
+      hello: world
+  snapclient-1:
+    build: .
+    command: /app/snapclient --host snapserver --logsink stdout --player file:filename=null
+  snapclient-2:
+    build: .
+    command: /app/snapclient --host snapserver --logsink stdout --player file:filename=null
