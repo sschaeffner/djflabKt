@@ -4,7 +4,7 @@ group = "xyz.sschaeffner"
 version = "0.0.0-SNAPSHOT"
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.10"
+    id("org.jetbrains.kotlin.jvm") version "1.9.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     application
 }
@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.9.10"))
+    implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.9.20"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("io.ktor:ktor-server-core:2.3.5")
     implementation("io.ktor:ktor-server-core-jvm:2.3.5")
