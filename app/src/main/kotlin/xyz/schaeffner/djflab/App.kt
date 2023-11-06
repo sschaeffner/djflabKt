@@ -2,6 +2,7 @@ package xyz.schaeffner.djflab
 
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -15,20 +16,34 @@ import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.request.ApplicationRequest
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
+import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
 import java.time.Duration
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.MDC
 import org.slf4j.event.Level
+import xyz.schaeffner.djflab.snapcast.SnapCast
+import xyz.schaeffner.djflab.web.VolumeChange
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.websocket.webSocket
+import kotlinx.serialization.json.Json
+import xyz.schaeffner.djflab.web.StreamChange
 
 class App(private val config: Config) {
     private val log: Logger = loggerFactory(this::class.java)
+
+    private val sc = SnapCast(config.snapcastBaseUrl)
+    private val updateNotificationChannel = Channel<Unit>()
 
     private fun ApplicationRequest.toLogStringWithColors(): String = "${httpMethod.value} - ${path()}"
 
@@ -38,6 +53,13 @@ class App(private val config: Config) {
             timeout = Duration.ofSeconds(15)
             maxFrameSize = Long.MAX_VALUE
             masking = false
+        }
+
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = false
+                isLenient = false
+            })
         }
 
         install(CallLogging) {
@@ -54,7 +76,7 @@ class App(private val config: Config) {
                     HttpStatusCode.Found -> "${status as HttpStatusCode} (${delayMillis}ms): " +
                             "${call.request.toLogStringWithColors()} -> ${call.response.headers[HttpHeaders.Location]} (Principal=${call.principal<UserIdPrincipal>()?.name})"
 
-                    "Unhandled" -> "${status} (${delayMillis}ms): ${call.request.toLogStringWithColors()} (Principal=${call.principal<UserIdPrincipal>()?.name})"
+                    "Unhandled" -> "$status (${delayMillis}ms): ${call.request.toLogStringWithColors()} (Principal=${call.principal<UserIdPrincipal>()?.name})"
                     else -> "${status as HttpStatusCode} (${delayMillis}ms): ${call.request.toLogStringWithColors()} (Principal=${call.principal<UserIdPrincipal>()?.name})"
                 }
             }
@@ -65,6 +87,26 @@ class App(private val config: Config) {
                 get("/helloworld") {
                     call.respond(HttpStatusCode.OK, "hello, world")
                 }
+
+                post("/volume") {
+                    val body: VolumeChange = call.receive()
+                    sc.setClientVolume(body.clientId, body.percent)
+                    call.respond(HttpStatusCode.OK)
+                }
+
+                post("/stream") {
+                    val body: StreamChange = call.receive()
+                    sc.setClientStream(body.clientId, body.streamId)
+                    call.respond(HttpStatusCode.OK)
+                }
+
+                webSocket("/ws") {
+                    // TODO store all current connections
+                    // TODO "forward" update messages to all current connections
+                    // TODO receive commands
+                    //      - rotate -> volume change
+                    //      - push -> stream change
+                }
             }
 
             get("/health") {
@@ -73,16 +115,46 @@ class App(private val config: Config) {
         }
     }
 
-    fun start() {
-        log.info("starting App...")
-        log.debug("Config: $config")
-
+    private fun startServer() {
         embeddedServer(Netty, environment = applicationEngineEnvironment {
             module(moduleConfiguration)
             connector {
                 port = 8080
             }
-        }).start(wait = true)
+        }).start(wait = false)
+    }
+
+    private suspend fun printClients() {
+        val server = sc.getStatus()
+
+        log.debug("--- Clients ---")
+        log.debug("id - hostname - name")
+        server.groups.flatMap { it.clients }.forEach {
+            log.debug("${it.id} - ${it.host.name} - ${it.config.name}")
+        }
+        log.debug("---------------")
+    }
+
+    fun start() {
+        log.info("starting App...")
+        log.trace("Config: {}", config)
+
+        runBlocking {
+            printClients()
+
+            launch {
+                sc.listenForUpdates(updateNotificationChannel)
+            }
+
+            launch {
+                for (u in updateNotificationChannel) {
+                    log.debug("received update through channel")
+                    // TODO forward updates to current clients
+                }
+            }
+
+            startServer()
+        }
     }
 }
 

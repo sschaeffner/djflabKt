@@ -6,6 +6,7 @@ version = "0.0.0-SNAPSHOT"
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("plugin.serialization") version "1.9.20"
     application
 }
 
@@ -20,8 +21,14 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:2.3.6")
     implementation("io.ktor:ktor-server-netty:2.3.6")
     implementation("io.ktor:ktor-server-auth:2.3.6")
+    implementation("io.ktor:ktor-server-content-negotiation:2.3.6")
     implementation("io.ktor:ktor-server-websockets:2.3.6")
     implementation("io.ktor:ktor-server-call-logging:2.3.6")
+    implementation("io.ktor:ktor-client-core:2.3.6")
+    implementation("io.ktor:ktor-client-cio:2.3.6")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.6")
+    implementation("io.ktor:ktor-client-websockets:2.3.6")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.6")
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("ch.qos.logback:logback-classic:1.4.11")
 

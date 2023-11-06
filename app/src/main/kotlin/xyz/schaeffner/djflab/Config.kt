@@ -4,13 +4,19 @@ import kotlin.random.Random
 
 data class Config(
     val apiUsers: Map<String, String>,
-    val wsPassword: String
+    val wsPassword: String,
+    val snapcastBaseUrl: String
 ) {
     companion object {
         fun fromEnv(): Config {
             val apiUsers = readEnvMap("FAB_API_USERS", mapOf())
             val wsPassword = readEnvString("FAB_WS_PASSWORD", Random.nextBytes(32).decodeToString())
-            return Config(apiUsers, wsPassword)
+            val snapcastBaseUrl = readEnvString("SNAPCAST_BASE_URL", "localhost:1780")
+            return Config(
+                apiUsers,
+                wsPassword,
+                snapcastBaseUrl
+            )
         }
 
         private fun readEnvString(name: String, default: String): String {
