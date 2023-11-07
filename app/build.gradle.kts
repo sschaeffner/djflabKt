@@ -16,12 +16,12 @@ repositories {
 dependencies {
     implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.9.20"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("io.ktor:ktor-server-core:2.3.5")
-    implementation("io.ktor:ktor-server-core-jvm:2.3.5")
-    implementation("io.ktor:ktor-server-netty:2.3.5")
-    implementation("io.ktor:ktor-server-auth:2.3.5")
-    implementation("io.ktor:ktor-server-websockets:2.3.5")
-    implementation("io.ktor:ktor-server-call-logging:2.3.5")
+    implementation("io.ktor:ktor-server-core:2.3.6")
+    implementation("io.ktor:ktor-server-core-jvm:2.3.6")
+    implementation("io.ktor:ktor-server-netty:2.3.6")
+    implementation("io.ktor:ktor-server-auth:2.3.6")
+    implementation("io.ktor:ktor-server-websockets:2.3.6")
+    implementation("io.ktor:ktor-server-call-logging:2.3.6")
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("ch.qos.logback:logback-classic:1.4.11")
 
