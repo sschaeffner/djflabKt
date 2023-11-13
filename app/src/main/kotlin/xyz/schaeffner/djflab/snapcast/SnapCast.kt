@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package xyz.schaeffner.djflab.snapcast
 
 import io.ktor.client.HttpClient
@@ -8,7 +10,6 @@ import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
@@ -19,6 +20,7 @@ import io.ktor.websocket.readText
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 import kotlinx.coroutines.channels.Channel
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import xyz.schaeffner.djflab.loggerFactory
@@ -33,7 +35,9 @@ class SnapCast(
             json(Json {
                 prettyPrint = true
                 isLenient = false
+                explicitNulls = false
                 encodeDefaults = true
+                ignoreUnknownKeys = true
             })
         }
         install(WebSockets) {
@@ -41,7 +45,7 @@ class SnapCast(
         }
     }
 
-    private suspend inline fun <reified REQ : Request> makeRequest(body: REQ): HttpResponse {
+    private suspend inline fun <reified REQ : Request, reified RES: Result> makeRequest(body: REQ): RES {
         log.debug("makeRequest: body={}", body)
 
         val result = httpClient.post("http://$baseUrl/jsonrpc") {
@@ -49,16 +53,21 @@ class SnapCast(
             setBody(body)
         }
 
-        // TODO check for error response (HTTP 200 response code, but error in body):
-        //      {"error":{"code":-32603,"data":"Client not found","message":"Internal error"},"id":689324952,"jsonrpc":"2.0"}
+        val response = result.body<Response<RES>>()
 
-        if (!result.status.isSuccess()) {
+        return if (!result.status.isSuccess()) {
             log.error("Request not successful: {} {}", result, result.bodyAsText())
+            throw RuntimeException("Request not successful: $result ${result.bodyAsText()}")
         } else {
             log.debug("result: {}, {}", result, result.bodyAsText())
+            response.result
+                ?: if (response.error != null) {
+                    log.error("Request not successful: {}", response.error)
+                    throw RuntimeException("Request not successful: ${response.error}")
+                } else {
+                    throw RuntimeException("Neither result nor error defined")
+                }
         }
-
-        return result
     }
 
     suspend fun listenForUpdates(channel: Channel<Unit>) {
@@ -96,9 +105,7 @@ class SnapCast(
 
     suspend fun getStatus(): Server {
         log.debug("getStatus")
-        val response = makeRequest(GetStatusRequest(id = Random.nextInt().absoluteValue))
-        val status = response.body<StatusResponse>().result
-        log.debug("status server: {}", status)
+        val status = makeRequest<GetStatusRequest, Status>(GetStatusRequest(id = Random.nextInt().absoluteValue))
         return status.server
     }
 
@@ -108,7 +115,7 @@ class SnapCast(
 
     private suspend fun setGroupClients(groupId: String, clients: List<String>) {
         log.debug("setGroupClients: groupId={}, clients={}", groupId, clients)
-        makeRequest(
+        makeRequest<GroupSetClientsRequest, IgnoringResult>(
             GroupSetClientsRequest(
                 id = Random.nextInt().absoluteValue,
                 params = GroupSetClientsRequest.Params(
@@ -121,7 +128,7 @@ class SnapCast(
 
     private suspend fun setGroupStream(groupId: String, streamId: String) {
         log.debug("setGroupStream: groupId={}, streamId={}", groupId, streamId)
-        makeRequest(
+        makeRequest<GroupSetStreamRequest, IgnoringResult>(
             GroupSetStreamRequest(
                 id = Random.nextInt().absoluteValue,
                 params = GroupSetStreamRequest.Params(
@@ -134,7 +141,7 @@ class SnapCast(
 
     suspend fun setClientVolume(clientId: String, volumePercent: Int) {
         log.debug("setClientVolume: clientId={}, volumePercent={}", clientId, volumePercent)
-        makeRequest(
+        makeRequest<ClientSetVolumeRequest, IgnoringResult>(
             ClientSetVolumeRequest(
                 id = Random.nextInt().absoluteValue,
                 params = ClientSetVolumeRequest.Params(

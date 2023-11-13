@@ -3,19 +3,31 @@ package xyz.schaeffner.djflab.snapcast
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-typealias StatusResponse = Response<Status>
-
 @Serializable
-data class Response<T>(
+data class Response<T : Result>(
     val id: Int,
     val jsonrpc: String,
-    val result: T
+    val result: T?,
+    val error: Error?
 )
+
+@Serializable
+data class Error(
+    val code: Int,
+    val data: String,
+    val message: String
+)
+
+@Serializable
+abstract class Result
+
+@Serializable
+class IgnoringResult : Result()
 
 @Serializable
 data class Status(
     val server: Server
-)
+) : Result()
 
 @Serializable
 data class Server(

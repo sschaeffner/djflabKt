@@ -36,6 +36,7 @@ import java.util.Collections
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
@@ -135,8 +136,12 @@ class App(private val config: Config) {
                             try {
                                 val command: Command = Json.decodeFromString(text)
                                 handleCommand(command)
-                            } catch (e: Exception) {
+                            } catch (e: SerializationException) {
                                 log.error("not able to deserialize: " + e.localizedMessage)
+                                e.printStackTrace()
+                            } catch (e: Exception) {
+                                log.error("not able to handle command: " + e.localizedMessage)
+                                e.printStackTrace()
                             }
                         }
                     } catch (e: Exception) {
