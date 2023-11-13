@@ -101,10 +101,6 @@ class App(private val config: Config) {
 
         routing {
             route("/api") {
-                get("/helloworld") {
-                    call.respond(HttpStatusCode.OK, "hello, world")
-                }
-
                 post("/volume") {
                     val body: VolumeChange = call.receive()
                     sc.setClientVolume(body.roomId.toClientId(), body.percent)
