@@ -13,6 +13,7 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.ApplicationRequest
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
@@ -25,19 +26,30 @@ import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
+import io.ktor.server.websocket.webSocket
+import io.ktor.websocket.DefaultWebSocketSession
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readText
+import io.ktor.websocket.send
 import java.time.Duration
+import java.util.Collections
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.MDC
 import org.slf4j.event.Level
 import xyz.schaeffner.djflab.snapcast.SnapCast
-import xyz.schaeffner.djflab.web.VolumeChange
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.websocket.webSocket
-import kotlinx.serialization.json.Json
+import xyz.schaeffner.djflab.web.ChangeVolumeCommand
+import xyz.schaeffner.djflab.web.Command
+import xyz.schaeffner.djflab.web.Notification
+import xyz.schaeffner.djflab.web.Room
+import xyz.schaeffner.djflab.web.RoomId
+import xyz.schaeffner.djflab.web.SourceId
 import xyz.schaeffner.djflab.web.StreamChange
+import xyz.schaeffner.djflab.web.VolumeChange
 
 class App(private val config: Config) {
     private val log: Logger = loggerFactory(this::class.java)
@@ -46,6 +58,8 @@ class App(private val config: Config) {
     private val updateNotificationChannel = Channel<Unit>()
 
     private fun ApplicationRequest.toLogStringWithColors(): String = "${httpMethod.value} - ${path()}"
+
+    private val connections: MutableSet<DefaultWebSocketSession> = Collections.synchronizedSet(HashSet())
 
     private val moduleConfiguration: Application.() -> Unit = {
         install(WebSockets) {
@@ -101,11 +115,41 @@ class App(private val config: Config) {
                 }
 
                 webSocket("/ws") {
-                    // TODO store all current connections
-                    // TODO "forward" update messages to all current connections
-                    // TODO receive commands
-                    //      - rotate -> volume change
-                    //      - push -> stream change
+                    send("welcome to DJFlab")
+                    log.debug("current connections: {}", connections)
+                    log.debug("adding new connection: {}", this)
+                    synchronized(connections) {
+                        connections.add(this)
+                    }
+
+                    try {
+                        for (frame in incoming) {
+                            log.debug("received {} from {}", frame, this)
+
+                            frame as? Frame.Text ?: continue
+                            val text = frame.readText()
+                            log.debug("received \"{}\" from {}", text, this)
+
+                            try {
+                                val command: Command = Json.decodeFromString(text)
+                                handleCommand(command)
+                            } catch (e: Exception) {
+                                log.error("not able to deserialize: " + e.localizedMessage)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        log.error("Error while receiving from websocket: " + e.localizedMessage)
+                    } finally {
+                        log.warn("Closed connection {} of for reason {}", this, closeReason.await())
+
+                        synchronized(connections) {
+                            log.debug("removing connection: {}", this)
+                            connections.remove(this)
+                            log.debug("current connections: {}", connections)
+                        }
+                    }
+
+                    log.debug("ending WebSocket handling for {}", this)
                 }
             }
 
@@ -135,24 +179,46 @@ class App(private val config: Config) {
         log.debug("---------------")
     }
 
+    private fun handleCommand(command: Command) {
+        // TODO handle commands
+        log.debug("handling command: {}", command)
+    }
+
+    private suspend fun handleSnapcastUpdates() {
+        for (u in updateNotificationChannel) {
+            val notification = Notification.from(sc.getStatus())
+            log.debug("received update through channel -> {}", notification)
+
+            val notificationJson = Json.encodeToString(notification)
+
+            connections.forEach {
+                log.debug("forwarding {} to {}", notificationJson, it)
+                it.send(notificationJson)
+            }
+        }
+    }
+
     fun start() {
         log.info("starting App...")
         log.trace("Config: {}", config)
 
+        val cmd: Command = ChangeVolumeCommand(RoomId.CREATIVE_ZONE, -20)
+        log.debug("sample command json: ${Json.encodeToString(cmd)}")
+
+        val not = Notification(
+            mapOf(
+                RoomId.SOCIAL_ZONE to Room(volumePercent = 100, sourceId = SourceId.SPOTIFY),
+                RoomId.CREATIVE_ZONE to Room(volumePercent = 90, sourceId = SourceId.AIRPLAY),
+                RoomId.LASER_ZONE to Room(volumePercent = 80, sourceId = SourceId.SPOTIFY),
+                RoomId.WORK_ZONE to Room(volumePercent = 70, sourceId = SourceId.AUX)
+            )
+        )
+        log.debug("sample notification json: ${Json.encodeToString(not)}")
+
         runBlocking {
             printClients()
-
-            launch {
-                sc.listenForUpdates(updateNotificationChannel)
-            }
-
-            launch {
-                for (u in updateNotificationChannel) {
-                    log.debug("received update through channel")
-                    // TODO forward updates to current clients
-                }
-            }
-
+            launch { sc.listenForUpdates(updateNotificationChannel) }
+            launch { handleSnapcastUpdates() }
             startServer()
         }
     }

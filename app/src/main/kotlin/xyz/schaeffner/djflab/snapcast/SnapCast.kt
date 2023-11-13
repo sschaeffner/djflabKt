@@ -24,7 +24,7 @@ import org.slf4j.Logger
 import xyz.schaeffner.djflab.loggerFactory
 
 class SnapCast(
-    private val baseUrl: String
+    private val baseUrl: String,
 ) {
     private val log: Logger = loggerFactory(this::class.java)
 
@@ -77,6 +77,10 @@ class SnapCast(
                     when(notification.method) {
                         "Client.OnVolumeChanged" -> {
                             log.debug("client volume changed")
+                            channel.send(Unit)
+                        }
+                        "Group.OnStreamChanged" -> {
+                            log.debug("group stream changed")
                             channel.send(Unit)
                         }
                         "Server.OnUpdate" -> {
