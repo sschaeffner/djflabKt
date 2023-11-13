@@ -181,14 +181,16 @@ class App(private val config: Config) {
         when (command) {
             is ChangeVolumeCommand -> {
                 val client = server.getClient(command.roomId)
-                val newVolumePercent = (client.config.volume.percent + command.deltaPercent).coerceIn(0 .. 100)
+                val newVolumePercent = (client.config.volume.percent + command.deltaPercent).coerceIn(0..100)
                 sc.setClientVolume(command.roomId.toClientId(), newVolumePercent)
             }
+
             is NextSourceCommand -> {
                 val group = server.getClientGroup(command.roomId)
                 val nextSource: SourceId = SourceId.fromStreamId(group.streamId).next()
                 sc.setClientStream(command.roomId.toClientId(), nextSource.toStreamId())
             }
+
             is SetSourceCommand -> {
                 sc.setClientStream(command.roomId.toClientId(), command.sourceId.toStreamId())
             }

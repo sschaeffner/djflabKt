@@ -60,7 +60,7 @@ application {
     mainClass.set("xyz.schaeffner.djflab.AppKt")
 }
 
-tasks{
+tasks {
     shadowJar {
         manifest {
             attributes(Pair("Main-Class", "xyz.schaeffner.djflab.AppKt"))

@@ -45,7 +45,7 @@ class SnapCast(
         }
     }
 
-    private suspend inline fun <reified REQ : Request, reified RES: Result> makeRequest(body: REQ): RES {
+    private suspend inline fun <reified REQ : Request, reified RES : Result> makeRequest(body: REQ): RES {
         log.debug("makeRequest: body={}", body)
 
         val result = httpClient.post("http://$baseUrl/jsonrpc") {
@@ -83,19 +83,22 @@ class SnapCast(
 
                 text?.let {
                     val notification = json.decodeFromString<Notification>(it)
-                    when(notification.method) {
+                    when (notification.method) {
                         "Client.OnVolumeChanged" -> {
                             log.debug("client volume changed")
                             channel.send(Unit)
                         }
+
                         "Group.OnStreamChanged" -> {
                             log.debug("group stream changed")
                             channel.send(Unit)
                         }
+
                         "Server.OnUpdate" -> {
                             log.debug("generic update")
                             channel.send(Unit)
                         }
+
                         else -> {
                             log.warn("unknown notification method: ${notification.method}")
                             channel.send(Unit)

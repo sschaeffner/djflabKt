@@ -52,7 +52,7 @@ fun RoomId.toClientId(): String = clients.entries.first { (_, v) -> v == this }.
 
 fun RoomId.Companion.fromHostname(hostname: String): RoomId = clientHostnames[hostname]!!
 
-fun SourceId.toStreamId(): String = sources.entries.first { (_, v) -> v == this}.key
+fun SourceId.toStreamId(): String = sources.entries.first { (_, v) -> v == this }.key
 
 fun SourceId.Companion.fromStreamId(streamId: String): SourceId = sources[streamId]!!
 
