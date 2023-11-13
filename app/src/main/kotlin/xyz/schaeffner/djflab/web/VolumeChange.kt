@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VolumeChange(
-    val clientId: String,
+    val roomId: RoomId,
     val percent: Int
 )

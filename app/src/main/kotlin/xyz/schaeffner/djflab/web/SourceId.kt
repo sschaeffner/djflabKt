@@ -25,5 +25,14 @@ class SourceIdSerializer : KSerializer<SourceId> {
 enum class SourceId(val value: Int) {
     SPOTIFY(1),
     AIRPLAY(2),
-    AUX(3)
+    AUX(3);
+
+    companion object
+
+    fun next(): SourceId =
+        when (this) {
+            SPOTIFY -> AIRPLAY
+            AIRPLAY -> AUX
+            AUX -> SPOTIFY
+        }
 }

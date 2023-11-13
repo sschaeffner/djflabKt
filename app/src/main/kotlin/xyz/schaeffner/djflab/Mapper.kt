@@ -1,5 +1,7 @@
 package xyz.schaeffner.djflab
 
+import xyz.schaeffner.djflab.snapcast.Client
+import xyz.schaeffner.djflab.snapcast.Group
 import xyz.schaeffner.djflab.snapcast.Server
 import xyz.schaeffner.djflab.web.Notification
 import xyz.schaeffner.djflab.web.Room
@@ -8,10 +10,17 @@ import xyz.schaeffner.djflab.web.SourceId
 
 // TODO make configurable
 val clients = mapOf(
-    "9a:dc:ed:1f:ad:08" to RoomId.WORK_ZONE,
-    "e2:6f:8b:05:0b:3f" to RoomId.LASER_ZONE,
+    "32:7f:d0:da:10:21" to RoomId.WORK_ZONE,
+    "62:97:a7:94:11:ed" to RoomId.LASER_ZONE,
     "00:00:00:00:00:03" to RoomId.SOCIAL_ZONE,
     "00:00:00:00:00:04" to RoomId.CREATIVE_ZONE
+)
+
+val clientHostnames = mapOf(
+    "workzone" to RoomId.WORK_ZONE,
+    "laserzone" to RoomId.LASER_ZONE,
+    "socialzone" to RoomId.SOCIAL_ZONE,
+    "creativezone" to RoomId.CREATIVE_ZONE,
 )
 
 val sources = mapOf(
@@ -22,13 +31,9 @@ val sources = mapOf(
 
 fun Notification.Companion.from(server: Server): Notification {
     val rooms: Map<RoomId, Room> = server.groups.flatMap { group ->
-        println("group $group")
         sources[group.streamId]?.let { sourceId ->
-            println("sourceId $sourceId")
             group.clients.flatMap {
-                println("client $it")
                 clients[it.id]?.let { roomId ->
-                    println("roomId $roomId")
                     listOf(
                         roomId to Room(
                             volumePercent = it.config.volume.percent,
@@ -41,4 +46,22 @@ fun Notification.Companion.from(server: Server): Notification {
     }.toMap()
 
     return Notification(rooms)
+}
+
+fun RoomId.toClientId(): String = clients.entries.first { (_, v) -> v == this }.key
+
+fun RoomId.Companion.fromHostname(hostname: String): RoomId = clientHostnames[hostname]!!
+
+fun SourceId.toStreamId(): String = sources.entries.first { (_, v) -> v == this}.key
+
+fun SourceId.Companion.fromStreamId(streamId: String): SourceId = sources[streamId]!!
+
+fun Server.getClient(roomId: RoomId): Client {
+    val clientId = roomId.toClientId()
+    return this.groups.flatMap { it.clients }.first { it.id == clientId }
+}
+
+fun Server.getClientGroup(roomId: RoomId): Group {
+    val clientId = roomId.toClientId()
+    return this.groups.first { g -> g.clients.any { it.id == clientId } }
 }

@@ -44,9 +44,11 @@ import org.slf4j.event.Level
 import xyz.schaeffner.djflab.snapcast.SnapCast
 import xyz.schaeffner.djflab.web.ChangeVolumeCommand
 import xyz.schaeffner.djflab.web.Command
+import xyz.schaeffner.djflab.web.NextSourceCommand
 import xyz.schaeffner.djflab.web.Notification
 import xyz.schaeffner.djflab.web.Room
 import xyz.schaeffner.djflab.web.RoomId
+import xyz.schaeffner.djflab.web.SetSourceCommand
 import xyz.schaeffner.djflab.web.SourceId
 import xyz.schaeffner.djflab.web.StreamChange
 import xyz.schaeffner.djflab.web.VolumeChange
@@ -104,13 +106,13 @@ class App(private val config: Config) {
 
                 post("/volume") {
                     val body: VolumeChange = call.receive()
-                    sc.setClientVolume(body.clientId, body.percent)
+                    sc.setClientVolume(body.roomId.toClientId(), body.percent)
                     call.respond(HttpStatusCode.OK)
                 }
 
-                post("/stream") {
+                post("/source") {
                     val body: StreamChange = call.receive()
-                    sc.setClientStream(body.clientId, body.streamId)
+                    sc.setClientStream(body.roomId.toClientId(), body.sourceId.toStreamId())
                     call.respond(HttpStatusCode.OK)
                 }
 
@@ -172,16 +174,33 @@ class App(private val config: Config) {
         val server = sc.getStatus()
 
         log.debug("--- Clients ---")
-        log.debug("id - hostname - name")
+        log.debug("id - hostname - name - room")
         server.groups.flatMap { it.clients }.forEach {
-            log.debug("${it.id} - ${it.host.name} - ${it.config.name}")
+            log.debug("{} - {} - {} - {}", it.id, it.host.name, it.config.name, RoomId.fromHostname(it.host.name))
         }
         log.debug("---------------")
     }
 
-    private fun handleCommand(command: Command) {
-        // TODO handle commands
+    private suspend fun handleCommand(command: Command) {
         log.debug("handling command: {}", command)
+
+        val server = sc.getStatus()
+
+        when (command) {
+            is ChangeVolumeCommand -> {
+                val client = server.getClient(command.roomId)
+                val newVolumePercent = (client.config.volume.percent + command.deltaPercent).coerceIn(0 .. 100)
+                sc.setClientVolume(command.roomId.toClientId(), newVolumePercent)
+            }
+            is NextSourceCommand -> {
+                val group = server.getClientGroup(command.roomId)
+                val nextSource: SourceId = SourceId.fromStreamId(group.streamId).next()
+                sc.setClientStream(command.roomId.toClientId(), nextSource.toStreamId())
+            }
+            is SetSourceCommand -> {
+                sc.setClientStream(command.roomId.toClientId(), command.sourceId.toStreamId())
+            }
+        }
     }
 
     private suspend fun handleSnapcastUpdates() {

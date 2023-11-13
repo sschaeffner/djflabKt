@@ -10,7 +10,9 @@ services:
       hello: world
   snapclient-1:
     build: .
+    hostname: workzone
     command: /app/snapclient --host snapserver --logsink stdout --player file:filename=null
   snapclient-2:
     build: .
+    hostname: laserzone
     command: /app/snapclient --host snapserver --logsink stdout --player file:filename=null

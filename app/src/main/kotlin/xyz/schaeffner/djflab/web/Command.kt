@@ -16,11 +16,11 @@ data class ChangeVolumeCommand(
 
 @Serializable
 data class NextSourceCommand(
-    val roomId: Int
+    val roomId: RoomId
 ) : Command()
 
 @Serializable
 data class SetSourceCommand(
-    val roomId: Int,
+    val roomId: RoomId,
     val sourceId: SourceId
 ) : Command()

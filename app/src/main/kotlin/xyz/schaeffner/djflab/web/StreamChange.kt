@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StreamChange(
-    val clientId: String,
-    val streamId: String
+    val roomId: RoomId,
+    val sourceId: SourceId
 )
