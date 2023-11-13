@@ -96,7 +96,10 @@ class SnapCast(
                             log.debug("generic update")
                             channel.send(Unit)
                         }
-                        else -> log.debug("unknown notification method: ${notification.method}")
+                        else -> {
+                            log.warn("unknown notification method: ${notification.method}")
+                            channel.send(Unit)
+                        }
                     }
                 }
             }
