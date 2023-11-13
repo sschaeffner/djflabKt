@@ -162,15 +162,6 @@ class App(private val config: Config) {
         }
     }
 
-    private fun startServer() {
-        embeddedServer(Netty, environment = applicationEngineEnvironment {
-            module(moduleConfiguration)
-            connector {
-                port = 8080
-            }
-        }).start(wait = false)
-    }
-
     private suspend fun printClients() {
         val server = sc.getStatus()
 
@@ -218,10 +209,7 @@ class App(private val config: Config) {
         }
     }
 
-    fun start() {
-        log.info("starting App...")
-        log.trace("Config: {}", config)
-
+    private fun printSampleJsons() {
         val cmd: Command = ChangeVolumeCommand(RoomId.CREATIVE_ZONE, -20)
         log.debug("sample command json: ${Json.encodeToString(cmd)}")
 
@@ -234,6 +222,22 @@ class App(private val config: Config) {
             )
         )
         log.debug("sample notification json: ${Json.encodeToString(not)}")
+    }
+
+    private fun startServer() {
+        embeddedServer(Netty, environment = applicationEngineEnvironment {
+            module(moduleConfiguration)
+            connector {
+                port = 8080
+            }
+        }).start(wait = false)
+    }
+
+    fun start() {
+        log.info("starting App...")
+        log.trace("Config: {}", config)
+
+        printSampleJsons()
 
         runBlocking {
             printClients()
