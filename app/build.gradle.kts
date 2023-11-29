@@ -30,7 +30,7 @@ dependencies {
     implementation("io.ktor:ktor-client-websockets:2.3.6")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.6")
     implementation("org.slf4j:slf4j-api:2.0.9")
-    implementation("ch.qos.logback:logback-classic:1.4.12")
+    implementation("ch.qos.logback:logback-classic:1.4.13")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
