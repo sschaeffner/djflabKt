@@ -15,6 +15,12 @@ data class ChangeVolumeCommand(
 ) : Command()
 
 @Serializable
+data class SetVolumeCommand(
+    val roomId: RoomId,
+    val percent: Int
+) : Command()
+
+@Serializable
 data class NextSourceCommand(
     val roomId: RoomId
 ) : Command()

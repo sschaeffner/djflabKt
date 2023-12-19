@@ -50,6 +50,7 @@ import xyz.schaeffner.djflab.web.Notification
 import xyz.schaeffner.djflab.web.Room
 import xyz.schaeffner.djflab.web.RoomId
 import xyz.schaeffner.djflab.web.SetSourceCommand
+import xyz.schaeffner.djflab.web.SetVolumeCommand
 import xyz.schaeffner.djflab.web.SourceId
 import xyz.schaeffner.djflab.web.StreamChange
 import xyz.schaeffner.djflab.web.VolumeChange
@@ -183,6 +184,10 @@ class App(private val config: Config) {
                 val client = server.getClient(command.roomId)
                 val newVolumePercent = (client.config.volume.percent + command.deltaPercent).coerceIn(0..100)
                 sc.setClientVolume(command.roomId.toClientId(), newVolumePercent)
+            }
+
+            is SetVolumeCommand -> {
+                sc.setClientVolume(command.roomId.toClientId(), command.percent)
             }
 
             is NextSourceCommand -> {
