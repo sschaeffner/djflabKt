@@ -24,9 +24,9 @@ val clientHostnames = mapOf(
 )
 
 val sources = mapOf(
-    "src1" to SourceId.SPOTIFY,
-    "src2" to SourceId.AIRPLAY,
-    "src3" to SourceId.AUX
+    "Spotify" to SourceId.SPOTIFY,
+    "Airplay" to SourceId.AIRPLAY,
+    "Aux" to SourceId.AUX
 )
 
 fun Notification.Companion.from(server: Server): Notification {
