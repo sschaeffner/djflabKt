@@ -10,17 +10,17 @@ import xyz.schaeffner.djflab.web.SourceId
 
 // TODO make configurable
 val clients = mapOf(
-    "32:7f:d0:da:10:21" to RoomId.WORK_ZONE,
-    "62:97:a7:94:11:ed" to RoomId.LASER_ZONE,
-    "00:00:00:00:00:03" to RoomId.SOCIAL_ZONE,
-    "00:00:00:00:00:04" to RoomId.CREATIVE_ZONE
+    "b8:27:eb:ae:7e:1b" to RoomId.WORK_ZONE,
+    "b8:27:eb:0c:8f:d0" to RoomId.LASER_ZONE,
+    "b8:27:eb:3e:90:ba" to RoomId.SOCIAL_ZONE,
+    "b8:27:eb:19:34:8d" to RoomId.CREATIVE_ZONE
 )
 
 val clientHostnames = mapOf(
-    "workzone" to RoomId.WORK_ZONE,
-    "laserzone" to RoomId.LASER_ZONE,
-    "socialzone" to RoomId.SOCIAL_ZONE,
-    "creativezone" to RoomId.CREATIVE_ZONE,
+    "klient2" to RoomId.WORK_ZONE,
+    "klient1" to RoomId.LASER_ZONE,
+    "klient0" to RoomId.SOCIAL_ZONE,
+    "klient3" to RoomId.CREATIVE_ZONE,
 )
 
 val sources = mapOf(
@@ -50,7 +50,7 @@ fun Notification.Companion.from(server: Server): Notification {
 
 fun RoomId.toClientId(): String = clients.entries.first { (_, v) -> v == this }.key
 
-fun RoomId.Companion.fromHostname(hostname: String): RoomId = clientHostnames[hostname]!!
+fun RoomId.Companion.fromHostname(hostname: String): RoomId? = clientHostnames[hostname]
 
 fun SourceId.toStreamId(): String = sources.entries.first { (_, v) -> v == this }.key
 

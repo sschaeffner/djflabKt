@@ -11,7 +11,7 @@ data class Config(
         fun fromEnv(): Config {
             val apiUsers = readEnvMap("FAB_API_USERS", mapOf())
             val wsPassword = readEnvString("FAB_WS_PASSWORD", Random.nextBytes(32).decodeToString())
-            val snapcastBaseUrl = readEnvString("SNAPCAST_BASE_URL", "localhost:1780")
+            val snapcastBaseUrl = readEnvString("SNAPCAST_BASE_URL", "10.100.1.50:1780")
             return Config(
                 apiUsers,
                 wsPassword,
