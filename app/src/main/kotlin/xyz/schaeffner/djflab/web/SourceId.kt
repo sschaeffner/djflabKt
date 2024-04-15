@@ -32,7 +32,7 @@ enum class SourceId(val value: Int) {
     fun next(): SourceId =
         when (this) {
             SPOTIFY -> AIRPLAY
-            AIRPLAY -> SPOTIFY // skip AUX, at the moment
+            AIRPLAY -> AUX
             AUX -> SPOTIFY
         }
 }
