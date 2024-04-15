@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>DJ Flab</title>
+    <meta charset="utf-8">
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+</head>
+<body>
+<div id="content">
+    <h1>DJ Flab</h1>
+
+    <h2>Social Zone (Room 1)</h2>
+
+    <table>
+        <tr>
+            <td>Source</td>
+            <td><span id="room1-source">?</span></td>
+            <td>
+                <button onclick="onNextSource(1);">next source</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Volume</td>
+            <td><input type="range" min="0" max="100" value="0" class="slider" id="room1-volume-slider"
+                       oninput="onSlider(1, this.value);"></td>
+            <td><span id="room1-volume">?</span></td>
+        </tr>
+    </table>
+
+    <h2>Creative Zone (Room 2)</h2>
+
+    <table>
+        <tr>
+            <td>Source</td>
+            <td><span id="room2-source">?</span></td>
+            <td>
+                <button onclick="onNextSource(2);">next source</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Volume</td>
+            <td><input type="range" min="0" max="100" value="0" class="slider" id="room2-volume-slider"
+                       oninput="onSlider(2, this.value);"></td>
+            <td><span id="room2-volume">?</span></td>
+        </tr>
+    </table>
+
+    <h2>Laser Zone (Room 3)</h2>
+
+    <table>
+        <tr>
+            <td>Source</td>
+            <td><span id="room3-source">?</span></td>
+            <td>
+                <button onclick="onNextSource(3);">next source</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Volume</td>
+            <td><input type="range" min="0" max="100" value="0" class="slider" id="room3-volume-slider"
+                       oninput="onSlider(3, this.value);"></td>
+            <td><span id="room3-volume">?</span></td>
+        </tr>
+    </table>
+
+    <h2>Work Zone (Room 4)</h2>
+
+    <table>
+        <tr>
+            <td>Source</td>
+            <td><span id="room4-source">?</span></td>
+            <td>
+                <button onclick="onNextSource(4);">next source</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Volume</td>
+            <td><input type="range" min="0" max="100" value="0" class="slider" id="room4-volume-slider"
+                       oninput="onSlider(4, this.value);"></td>
+            <td><span id="room4-volume">?</span></td>
+        </tr>
+    </table>
+</div>
+<!--<h2>Debug Log ⬆</h2>-->
+<!--<div id="debug">-->
+<!--    <h3>RX</h3>-->
+<!--    <div id="debug-log-rx"></div>-->
+<!--    <h3>TX</h3>-->
+<!--    <div id="debug-log-tx"></div>-->
+<!--</div>-->
+
+<script>setup();</script>
+</body>
+</html>

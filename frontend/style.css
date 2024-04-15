@@ -1,0 +1,20 @@
+body {
+    max-width: 600px;
+    margin: auto;
+}
+
+#content {
+    width: 95%;
+    margin: auto;
+}
+
+table, tr {
+    width: 100%;
+    margin: auto;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 1em;
+}
