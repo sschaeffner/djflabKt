@@ -123,6 +123,10 @@ class App(private val config: Config) {
                     }
 
                     try {
+                        val initialStatusNotification = Notification.from(sc.getStatus())
+                        val initialStatusNotificationJson = Json.encodeToString(initialStatusNotification)
+                        send(initialStatusNotificationJson)
+
                         for (frame in incoming) {
                             log.debug("received {} from {}", frame, this)
 
