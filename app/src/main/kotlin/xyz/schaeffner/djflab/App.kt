@@ -11,6 +11,7 @@ import io.ktor.server.auth.principal
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.http.content.staticFiles
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -19,6 +20,7 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
@@ -31,6 +33,8 @@ import io.ktor.websocket.DefaultWebSocketSession
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
+import java.io.File
+
 import java.time.Duration
 import java.util.Collections
 import kotlinx.coroutines.channels.Channel
@@ -160,6 +164,12 @@ class App(private val config: Config) {
                     log.debug("ending WebSocket handling for {}", this)
                 }
             }
+
+            get("/") {
+                call.respondRedirect("/fe/")
+            }
+
+            staticFiles("/fe/", File("frontend"))
 
             get("/health") {
                 call.respond(HttpStatusCode.OK)
