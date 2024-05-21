@@ -4,9 +4,9 @@ group = "xyz.sschaeffner"
 version = "0.0.0-SNAPSHOT"
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.24"
+    id("org.jetbrains.kotlin.jvm") version "2.0.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    kotlin("plugin.serialization") version "1.9.24"
+    kotlin("plugin.serialization") version "2.0.0"
     application
 }
 
@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.9.24"))
+    implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:2.0.0"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("io.ktor:ktor-server-core:2.3.11")
     implementation("io.ktor:ktor-server-core-jvm:2.3.11")
