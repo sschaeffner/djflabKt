@@ -37,7 +37,7 @@ jobs:
           distribution: 'zulu'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3.4.0
+        uses: gradle/actions/setup-gradle@v3.4.1
 
       - name: Build Fat JAR
         run: ./gradlew shadowjar
@@ -61,7 +61,7 @@ jobs:
 
       - name: Build and push container image
         id: docker_build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
