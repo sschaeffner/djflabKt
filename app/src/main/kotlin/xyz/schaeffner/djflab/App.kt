@@ -4,16 +4,13 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.UserIdPrincipal
 import io.ktor.server.auth.principal
-import io.ktor.server.engine.applicationEngineEnvironment
-import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.staticFiles
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.ApplicationRequest
 import io.ktor.server.request.httpMethod
@@ -33,15 +30,10 @@ import io.ktor.websocket.DefaultWebSocketSession
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import io.ktor.websocket.send
-import java.io.File
-
-import java.time.Duration
-import java.util.Collections
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.MDC
@@ -58,6 +50,9 @@ import xyz.schaeffner.djflab.web.SetVolumeCommand
 import xyz.schaeffner.djflab.web.SourceId
 import xyz.schaeffner.djflab.web.StreamChange
 import xyz.schaeffner.djflab.web.VolumeChange
+import java.io.File
+import java.util.Collections
+import kotlin.time.Duration.Companion.seconds
 
 class App(private val config: Config) {
     private val log: Logger = loggerFactory(this::class.java)
@@ -71,8 +66,8 @@ class App(private val config: Config) {
 
     private val moduleConfiguration: Application.() -> Unit = {
         install(WebSockets) {
-            pingPeriod = Duration.ofSeconds(5)
-            timeout = Duration.ofSeconds(15)
+            pingPeriod = 5.seconds
+            timeout = 15.seconds
             maxFrameSize = Long.MAX_VALUE
             masking = false
         }
@@ -246,12 +241,9 @@ class App(private val config: Config) {
     }
 
     private fun startServer() {
-        embeddedServer(Netty, environment = applicationEngineEnvironment {
-            module(moduleConfiguration)
-            connector {
-                port = 8080
-            }
-        }).start(wait = false)
+        embeddedServer(Netty, port = 8080) {
+            moduleConfiguration()
+        }.start(wait = false)
     }
 
     fun start() {

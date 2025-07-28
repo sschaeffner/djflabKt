@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalSerializationApi::class)
-
 package xyz.schaeffner.djflab.snapcast
 
 import io.ktor.client.HttpClient
@@ -7,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.pingInterval
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -17,13 +16,13 @@ import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
-import kotlin.math.absoluteValue
-import kotlin.random.Random
 import kotlinx.coroutines.channels.Channel
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import xyz.schaeffner.djflab.loggerFactory
+import kotlin.math.absoluteValue
+import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 
 class SnapCast(
     private val baseUrl: String,
@@ -41,7 +40,7 @@ class SnapCast(
             })
         }
         install(WebSockets) {
-            pingInterval = 10_000
+            pingInterval = 10.seconds
         }
     }
 
