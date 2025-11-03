@@ -34,8 +34,8 @@ dependencies {
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.1")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.1")
 }
 
