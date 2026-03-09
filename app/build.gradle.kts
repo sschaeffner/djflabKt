@@ -6,6 +6,7 @@ version = "0.0.0-SNAPSHOT"
 plugins {
     id("org.jetbrains.kotlin.jvm") version "2.3.0"
     id("com.gradleup.shadow") version "9.3.2"
+    id("com.github.ben-manes.versions") version "0.53.0"
     kotlin("plugin.serialization") version "2.3.0"
     application
 }
