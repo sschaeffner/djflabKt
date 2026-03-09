@@ -26,7 +26,8 @@ enum class RoomId(val value: Int) {
     SOCIAL_ZONE(1),
     CREATIVE_ZONE(2),
     LASER_ZONE(3),
-    WORK_ZONE(4);
+    WORK_ZONE(4),
+    OPEN_HARDWARE_LAB(5);
 
     companion object
 }

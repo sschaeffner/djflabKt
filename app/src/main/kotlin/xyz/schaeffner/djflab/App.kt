@@ -234,7 +234,8 @@ class App(private val config: Config) {
                 RoomId.SOCIAL_ZONE to Room(volumePercent = 100, sourceId = SourceId.SPOTIFY),
                 RoomId.CREATIVE_ZONE to Room(volumePercent = 90, sourceId = SourceId.AIRPLAY),
                 RoomId.LASER_ZONE to Room(volumePercent = 80, sourceId = SourceId.SPOTIFY),
-                RoomId.WORK_ZONE to Room(volumePercent = 70, sourceId = SourceId.AUX)
+                RoomId.WORK_ZONE to Room(volumePercent = 70, sourceId = SourceId.AUX),
+                RoomId.OPEN_HARDWARE_LAB to Room(volumePercent = 100, sourceId = SourceId.SPOTIFY),
             )
         )
         log.debug("sample notification json: ${Json.encodeToString(not)}")

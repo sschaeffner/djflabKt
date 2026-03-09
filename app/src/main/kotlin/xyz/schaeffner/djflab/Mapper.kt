@@ -13,7 +13,8 @@ val clients = mapOf(
     "b8:27:eb:ae:7e:1b" to RoomId.WORK_ZONE,
     "b8:27:eb:0c:8f:d0" to RoomId.LASER_ZONE,
     "b8:27:eb:3e:90:ba" to RoomId.SOCIAL_ZONE,
-    "b8:27:eb:19:34:8d" to RoomId.CREATIVE_ZONE
+    "b8:27:eb:19:34:8d" to RoomId.CREATIVE_ZONE,
+    "00:80:64:bf:45:0b" to RoomId.OPEN_HARDWARE_LAB
 )
 
 val clientHostnames = mapOf(
@@ -21,6 +22,7 @@ val clientHostnames = mapOf(
     "klient1" to RoomId.LASER_ZONE,
     "klient0" to RoomId.SOCIAL_ZONE,
     "klient3" to RoomId.CREATIVE_ZONE,
+    "DJOHWL" to RoomId.OPEN_HARDWARE_LAB
 )
 
 val sources = mapOf(

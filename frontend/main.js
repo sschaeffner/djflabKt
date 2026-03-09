@@ -42,7 +42,7 @@ function update(notification) {
     let rooms = notification["rooms"];
     console.debug("rooms: ", rooms);
 
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 5; i++) {
         let volume = document.getElementById(`room${i}-volume`);
         let volumeSlider = document.getElementById(`room${i}-volume-slider`);
         let source = document.getElementById(`room${i}-source`);
