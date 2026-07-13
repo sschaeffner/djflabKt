@@ -31,12 +31,12 @@ dependencies {
     implementation("io.ktor:ktor-client-websockets:3.5.1")
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.5.1")
     implementation("org.slf4j:slf4j-api:2.0.18")
-    implementation("ch.qos.logback:logback-classic:1.5.37")
+    implementation("ch.qos.logback:logback-classic:1.5.38")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.1.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:6.1.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.1.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.1.2")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.1")
 }
 
