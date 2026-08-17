@@ -9,10 +9,11 @@ import xyz.schaeffner.djflab.web.RoomId
 import xyz.schaeffner.djflab.web.SourceId
 
 // TODO make configurable
+// TODO make matching logic case insensitive
 val clients = mapOf(
     "b8:27:eb:ae:7e:1b" to RoomId.WORK_ZONE,
     "88:13:BF:C7:78:FC" to RoomId.LASER_ZONE,
-    "b8:27:eb:3e:90:ba" to RoomId.SOCIAL_ZONE,
+    "88:13:BF:C8:18:B8" to RoomId.SOCIAL_ZONE,
     "b8:27:eb:19:34:8d" to RoomId.CREATIVE_ZONE,
     "00:80:64:bf:45:0b" to RoomId.OPEN_HARDWARE_LAB
 )
