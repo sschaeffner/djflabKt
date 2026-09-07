@@ -4,10 +4,10 @@ group = "xyz.sschaeffner"
 version = "0.0.0-SNAPSHOT"
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.4.0"
-    id("com.gradleup.shadow") version "9.5.1"
-    id("com.github.ben-manes.versions") version "0.54.0"
-    kotlin("plugin.serialization") version "2.4.0"
+    id("org.jetbrains.kotlin.jvm") version "2.4.10"
+    id("com.gradleup.shadow") version "9.6.1"
+    id("com.github.ben-manes.versions") version "0.61.0"
+    kotlin("plugin.serialization") version "2.4.10"
     application
 }
 
@@ -16,27 +16,27 @@ repositories {
 }
 
 dependencies {
-    implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:2.4.0"))
+    implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:2.4.10"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("io.ktor:ktor-server-core:3.5.1")
-    implementation("io.ktor:ktor-server-core-jvm:3.5.1")
-    implementation("io.ktor:ktor-server-netty:3.5.1")
-    implementation("io.ktor:ktor-server-auth:3.5.1")
-    implementation("io.ktor:ktor-server-content-negotiation:3.5.1")
-    implementation("io.ktor:ktor-server-websockets:3.5.1")
-    implementation("io.ktor:ktor-server-call-logging:3.5.1")
-    implementation("io.ktor:ktor-client-core:3.5.1")
-    implementation("io.ktor:ktor-client-cio:3.5.1")
-    implementation("io.ktor:ktor-client-content-negotiation:3.5.1")
-    implementation("io.ktor:ktor-client-websockets:3.5.1")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.5.1")
-    implementation("org.slf4j:slf4j-api:2.0.18")
-    implementation("ch.qos.logback:logback-classic:1.5.37")
+    implementation("io.ktor:ktor-server-core:3.5.2")
+    implementation("io.ktor:ktor-server-core-jvm:3.5.2")
+    implementation("io.ktor:ktor-server-netty:3.5.2")
+    implementation("io.ktor:ktor-server-auth:3.5.2")
+    implementation("io.ktor:ktor-server-content-negotiation:3.5.2")
+    implementation("io.ktor:ktor-server-websockets:3.5.2")
+    implementation("io.ktor:ktor-server-call-logging:3.5.2")
+    implementation("io.ktor:ktor-client-core:3.5.2")
+    implementation("io.ktor:ktor-client-cio:3.5.2")
+    implementation("io.ktor:ktor-client-content-negotiation:3.5.2")
+    implementation("io.ktor:ktor-client-websockets:3.5.2")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.5.2")
+    implementation("org.slf4j:slf4j-api:2.0.19")
+    implementation("ch.qos.logback:logback-classic:1.6.3")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.1.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:6.1.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.1.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:6.1.3")
     testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.1")
 }
 
